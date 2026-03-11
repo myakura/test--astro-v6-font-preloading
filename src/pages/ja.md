@@ -1,45 +1,29 @@
 ---
 layout: ../layouts/Layout.astro
-title: English + Japanese Page — Astro Font Sample
+title: Latin + Japanese Page — Astro Font Preload Reproduction
 ---
 
-# English + Japanese Page
+# Latin + Japanese Page
 
-このページは **Noto Sans JP**（Google Fonts）を `<Font />` コンポーネントで読み込んでいます。英語と日本語の両方をカバーするフォントなので、1つの設定で済みます。
+このページは英語と日本語が混在するページです。Noto Sans JP を Google Fonts プロバイダーで読み込んでいます。
 
-The layout uses a single font for both scripts:
+This page has both Latin and Japanese content. Like the [Latin-only page](en.html), it gets **121 `<link rel="preload">` tags and 245 `@font-face` rules** in the built output.
 
-```astro
-<Font cssVariable="--font-noto-sans-jp" preload />
-```
+## Issue 1: All unicode-range blocks preloaded
 
-CSSでは CSS変数を `font-family` に指定します:
+Even though preloading all blocks is arguably more justified here than on the Latin-only page, 121 simultaneous high-priority fetches is still excessive — most of the CJK range files won't be needed until the user scrolls to content using those specific characters.
 
-```css
-body {
-  font-family: var(--font-noto-sans-jp), sans-serif;
-}
-```
+## Issue 2: Variable font split into static weights
 
-## フォントについて / About the fonts
-
-**Noto Sans JP** は Google が開発したフォントファミリーで、すべての言語で一貫した視覚的な品質を提供することを目的としています。名前の "Noto" は "no tofu"（豆腐なし）に由来し、文字が表示できない際に表示される □（通称「豆腐」）をなくすことを目指しています。
-
-**Inter** is a typeface designed by Rasmus Andersson, optimized for screen reading. It pairs well with Japanese fonts due to its clean geometric forms and balanced proportions.
-
-## Astro の Font API の利点 / Benefits of Astro's Font API
-
-- **プライバシー**: フォントファイルを自サイトからホスト。Google Fonts 等の第三者サーバーへのリクエストが不要
-- **パフォーマンス**: `preload` により重要フォントの優先読み込みが可能
-- **型安全**: TypeScript による設定補完サポート
-- **Caching**: Build time に fonts をダウンロード・キャッシュし、`_astro/fonts/` に配置
+Noto Sans JP is distributed by Google Fonts as a **variable font**, supporting the full `wght` axis (`100–900`) in a single file per unicode-range block. Astro requests it as discrete static weights instead, producing one set of ~60 files for weight 400 and another for weight 700 — roughly double what a variable font request would require.
 
 ---
 
-テキストの比較 / Text comparison:
+テキストサンプル / Text samples:
 
-| 言語 | サンプルテキスト |
-|------|------------------|
-| English | The quick brown fox jumps over the lazy dog. |
-| 日本語 | 日本語のフォントサンプルです。いろはにほへとちりぬるを。 |
-| Mixed | Web fonts make your site look great. Astro は高速です。 |
+| Script | Sample |
+|--------|--------|
+| Latin | The quick brown fox jumps over the lazy dog. |
+| Japanese | 日本語のサンプルテキストです。いろはにほへとちりぬるを。 |
+| Mixed | Web fonts の読み込みには工夫が必要です。 |
+

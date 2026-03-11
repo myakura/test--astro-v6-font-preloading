@@ -1,24 +1,25 @@
 ---
 layout: ../layouts/Layout.astro
-title: English Page — Astro Font Sample
+title: Latin-only Page — Astro Font Preload Reproduction
 ---
 
-# English Page
+# Latin-only Page
 
-This page uses the **Noto Sans JP** font loaded via Astro's `<Font />` component with the Google Fonts provider.
+This page contains only Latin text. It uses `<Font cssVariable="--font-noto-sans-jp" preload />` in the layout, same as every other page in this site.
 
-The layout includes `<Font cssVariable="--font-noto-sans-jp" preload />` in the `<head>`. Astro downloads and caches the font file at build time, then serves it from your own origin — no requests to third-party servers at runtime.
+Despite having no Japanese content, inspecting the `<head>` of the built `en.html` shows **121 `<link rel="preload">` tags** — one for every unicode-range file in the downloaded font set, including all CJK blocks this page will never render.
 
-## The quick brown fox
+## Expected
 
-Typography is the art and technique of arranging type to make written language legible, readable, and appealing when displayed. The arrangement of type involves selecting typefaces, point sizes, line lengths, line spacing, and letter spacing.
+Preload hints for the Latin unicode-range block(s) only, since that's all this page uses.
 
-Good typography creates a visual hierarchy that guides the reader through the content. It sets the tone and personality of a piece, communicates mood, and affects how easily text can be read.
+## Actual
 
-## Why Noto Sans JP for English too?
+All 121 font files preloaded unconditionally. `preload` is a high-priority fetch directive, so the browser will eagerly fetch all of these before they're needed — or needed at all.
 
-Noto Sans JP includes Latin character coverage alongside Japanese glyphs, making it a great single-font choice for multilingual sites. Using one font family keeps the configuration simple and ensures visual consistency across languages.
+---
 
-- Designed by Google
-- Open source (SIL Open Font License)
-- Available via [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Sans+JP)
+The quick brown fox jumps over the lazy dog.
+
+Typography is the art and technique of arranging type to make written language legible, readable, and appealing when displayed. Good typography creates a visual hierarchy that guides the reader through the content.
+

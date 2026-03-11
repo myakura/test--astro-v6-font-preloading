@@ -1,39 +1,50 @@
-# Astro v6 Font Component Sample
+# Astro v6 Font Component: Excessive Preloads Reproduction
 
-A sample project demonstrating [Astro v6's Font component](https://docs.astro.build/en/guides/fonts/). It shows how to load web fonts via the `<Font />` component with automatic preload links, optimized fallbacks, and local font caching.
+This repo is a minimal reproduction for what appears to be a performance issue with Astro v6's `<Font preload />` component.
 
-**Demo:** https://myakura.github.io/test--astro-v6-font-preloading/
+## Setup
 
-## What's in this repo
+Noto Sans JP is configured via the Google Fonts provider with `subsets: ['latin', 'japanese']` and weights `400` and `700`:
 
-- **Font configuration** — Noto Sans JP loaded from Google Fonts via `fontProviders.google()`, covering both Latin and Japanese character sets
-- **Single layout** — `src/layouts/Layout.astro` includes `<Font cssVariable="--font-noto-sans-jp" preload />` in the `<head>`
-- **Three Markdown pages:**
-  - `/` — Top page explaining the Font API with code examples
-  - `/en` — English-only content
-  - `/ja` — English and Japanese mixed content
+```js
+// astro.config.mjs
+fonts: [
+  {
+    provider: fontProviders.google(),
+    name: 'Noto Sans JP',
+    cssVariable: '--font-noto-sans-jp',
+    weights: [400, 700],
+    styles: ['normal'],
+    subsets: ['latin', 'japanese'],
+  },
+],
+```
+
+The layout adds `<Font cssVariable="--font-noto-sans-jp" preload />` in the `<head>`.
+
+## The problem
+
+Building this site produces **121 `<link rel="preload">` tags and 245 `@font-face` rules on every page** — including the Latin-only page. See the [built output](https://github.com/myakura/test--astro-v6-font-preloading/tree/main/dist) or the [live demo](https://myakura.github.io/test--astro-v6-font-preloading/).
+
+Two issues compound each other:
+
+1. **All unicode-range blocks are preloaded regardless of page content** — the Latin-only page (`en.html`) gets all 121 preloads including every CJK block it will never use.
+2. **Variable fonts are downloaded as static weights** — Noto Sans JP is a variable font but Astro requests separate files per weight, roughly doubling the file count.
+
+## Pages
+
+- [index.html](index.html) — this page
+- [en.html](en.html) — Latin-only content (but still gets 121 preloads)
+- [ja.html](ja.html) — Latin + Japanese content (same 121 preloads; would benefit from variable font)
 
 ## Key files
 
 ```text
 /
-├── astro.config.mjs        ← Font configuration (Google Fonts, Noto Sans JP)
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro    ← <Font /> component usage
-│   └── pages/
-│       ├── index.md
-│       ├── en.md
-│       └── ja.md
-└── .github/workflows/
-    └── deploy.yml          ← GitHub Pages deployment (Node.js 24)
+├── astro.config.mjs        ← Font configuration
+├── src/layouts/Layout.astro ← <Font preload /> usage
+└── dist/
+    ├── en.html             ← 121 preloads on a Latin-only page
+    └── ja.html             ← 121 preloads, 245 @font-face rules
 ```
 
-## Commands
-
-| Command           | Action                                      |
-| :---------------- | :------------------------------------------ |
-| `npm install`     | Install dependencies                        |
-| `npm run dev`     | Start local dev server at `localhost:4321`  |
-| `npm run build`   | Build production site to `./dist/`          |
-| `npm run preview` | Preview build locally before deploying      |

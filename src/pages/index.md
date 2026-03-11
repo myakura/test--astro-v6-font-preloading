@@ -1,51 +1,46 @@
 ---
 layout: ../layouts/Layout.astro
-title: Astro v6 Font Component Sample
+title: Astro Font Preload — Reproduction
 ---
 
-# Astro v6 Font Component Sample
+# Astro Font Preload: Excessive Preloads Reproduction
 
-This project demonstrates the **Font component** introduced in Astro v6. The `<Font />` component makes it easy to load web fonts with automatic performance optimizations — including preload links, optimized fallbacks, and local font caching.
+This site is a minimal reproduction for what appears to be a performance issue with Astro v6's `<Font preload />` component.
 
-## How it works
+## Setup
 
-Fonts are configured in `astro.config.mjs` using the `fonts` option:
+Noto Sans JP is configured via the Google Fonts provider:
 
 ```js
-import { defineConfig, fontProviders } from 'astro/config';
-
-export default defineConfig({
-  fonts: [
-    {
-      provider: fontProviders.google(),
-      name: 'Noto Sans JP',
-      cssVariable: '--font-noto-sans-jp',
-      subsets: ['latin', 'japanese'],
-    },
-  ],
-});
+fonts: [
+  {
+    provider: fontProviders.google(),
+    name: 'Noto Sans JP',
+    cssVariable: '--font-noto-sans-jp',
+    weights: [400, 700],
+    styles: ['normal'],
+    subsets: ['latin', 'japanese'],
+  },
+],
 ```
 
-Then, in your layout's `<head>`, add the `<Font />` component:
+The layout uses `<Font cssVariable="--font-noto-sans-jp" preload />` in the `<head>`.
 
-```astro
----
-import { Font } from 'astro:assets';
----
-<head>
-  <Font cssVariable="--font-noto-sans-jp" preload />
-</head>
-```
+## What to look at
 
-Finally, use the CSS variable in your styles:
+View the page source of any page — **121 `<link rel="preload">` tags** appear in every `<head>`, one per unicode-range font file. There are also **245 `@font-face` rules** inlined in `<style>`.
 
-```css
-body {
-  font-family: var(--font-noto-sans-jp), sans-serif;
-}
-```
+Two issues seem to be causing this:
 
-## Pages in this sample
+**1. All unicode-range blocks are preloaded regardless of page content**
 
-- [English page](en.html) — English-only content with Noto Sans JP
-- [English + Japanese page](ja.html) — English and Japanese mixed content with Noto Sans JP
+The [Latin-only page](en.html) has no Japanese content, but still gets all 121 preloads including every CJK block. `preload` is a high-priority fetch hint — the browser will eagerly fetch all of them.
+
+**2. Variable fonts are split into static weights**
+
+Noto Sans JP is a variable font on Google Fonts, but Astro downloads separate files for each weight. With weights `400` and `700`, that's roughly 2× the files a variable font request would need.
+
+## Pages
+
+- [en.html](en.html) — Latin-only content; demonstrates issue 1
+- [ja.html](ja.html) — Latin + Japanese content; demonstrates both issues
