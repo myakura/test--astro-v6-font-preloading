@@ -6,7 +6,6 @@ interface Props {
 }
 
 const { title } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <html lang="ja">
@@ -20,9 +19,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </head>
   <body>
     <nav>
-      <a href={`${base}/`}>Home</a>
-      <a href={`${base}/en`}>English</a>
-      <a href={`${base}/ja`}>English + Japanese</a>
+      <a href="/test--astro-v6-font-preloading/index.html">Home</a>
+      <a href="/test--astro-v6-font-preloading/en">English</a>
+      <a href="/test--astro-v6-font-preloading/ja">English + Japanese</a>
     </nav>
     <main>
       <slot />
