@@ -5,6 +5,14 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
   site: 'https://myakura.github.io/test--astro-v6-font-preloading',
   base: '/test--astro-v6-font-preloading',
+  build: {
+    inlineStylesheets: 'never',
+  },
+  vite: {
+    build: {
+      minify: false,
+    },
+  },
   fonts: [
     {
       provider: fontProviders.google(),
