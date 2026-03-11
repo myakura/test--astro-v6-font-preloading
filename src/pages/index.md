@@ -47,5 +47,5 @@ body {
 
 ## Pages in this sample
 
-- [English page](/en) — Uses `LayoutEn.astro` with the **Inter** font only
-- [English + Japanese page](/ja) — Uses `LayoutJa.astro` with both **Inter** and **Noto Sans JP**
+- [English page](en.html) — English-only content with Noto Sans JP
+- [English + Japanese page](ja.html) — English and Japanese mixed content with Noto Sans JP
