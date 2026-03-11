@@ -7,7 +7,7 @@ title: Latin-only Page — Astro Font Preload Reproduction
 
 This page contains only Latin text. It uses `<Font cssVariable="--font-noto-sans-jp" preload />` in the layout, same as every other page in this site.
 
-Despite having no Japanese content, inspecting the `<head>` of the built `en.html` shows **121 `<link rel="preload">` tags** — one for every unicode-range file in the downloaded font set, including all CJK blocks this page will never render.
+Despite having no Japanese content, inspecting the `<head>` of the built `en.html` shows 121 `<link rel="preload">` tags — one for every unicode-range file in the downloaded font set, including all CJK blocks this page will never render.
 
 ## Expected
 
