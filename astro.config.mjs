@@ -6,6 +6,7 @@ export default defineConfig({
   site: 'https://myakura.github.io/test--astro-v6-font-preloading',
   base: '/test--astro-v6-font-preloading',
   build: {
+    format: 'file',
     inlineStylesheets: 'never',
   },
   vite: {

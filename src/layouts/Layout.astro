@@ -6,10 +6,6 @@ interface Props {
 }
 
 const { title } = Astro.props;
-// Pages one level deep (en/, ja/) need '../' to get back to the root.
-// The index page only has the base path segment, so prefix stays empty.
-const depth = Astro.url.pathname.split('/').filter(Boolean).length - 1;
-const prefix = depth > 0 ? '../' : '';
 ---
 
 <html lang="ja">
@@ -23,9 +19,9 @@ const prefix = depth > 0 ? '../' : '';
   </head>
   <body>
     <nav>
-      <a href={`${prefix}index.html`}>Home</a>
-      <a href={`${prefix}en/index.html`}>English</a>
-      <a href={`${prefix}ja/index.html`}>English + Japanese</a>
+      <a href="index.html">Home</a>
+      <a href="en.html">English</a>
+      <a href="ja.html">English + Japanese</a>
     </nav>
     <main>
       <slot />
