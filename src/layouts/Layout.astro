@@ -1,0 +1,59 @@
+---
+import { Font } from 'astro:assets';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <Font cssVariable="--font-noto-sans-jp" preload />
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/en">English</a>
+      <a href="/ja">English + Japanese</a>
+    </nav>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    font-family: var(--font-noto-sans-jp), sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    line-height: 1.8;
+    color: #1a1a1a;
+  }
+
+  nav {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  nav a {
+    color: #555;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  nav a:hover {
+    color: #000;
+  }
+</style>
