@@ -7,12 +7,6 @@ export default defineConfig({
   base: '/test--astro-v6-font-preloading',
   build: {
     format: 'file',
-    inlineStylesheets: 'never',
-  },
-  vite: {
-    build: {
-      minify: false,
-    },
   },
   fonts: [
     {
