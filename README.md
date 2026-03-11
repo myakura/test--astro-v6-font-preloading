@@ -1,43 +1,39 @@
-# Astro Starter Kit: Minimal
+# Astro v6 Font Component Sample
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A sample project demonstrating [Astro v6's Font component](https://docs.astro.build/en/guides/fonts/). It shows how to load web fonts via the `<Font />` component with automatic preload links, optimized fallbacks, and local font caching.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Demo:** https://myakura.github.io/test--astro-v6-font-preloading/
 
-## 🚀 Project Structure
+## What's in this repo
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Font configuration** — Noto Sans JP loaded from Google Fonts via `fontProviders.google()`, covering both Latin and Japanese character sets
+- **Single layout** — `src/layouts/Layout.astro` includes `<Font cssVariable="--font-noto-sans-jp" preload />` in the `<head>`
+- **Three Markdown pages:**
+  - `/` — Top page explaining the Font API with code examples
+  - `/en` — English-only content
+  - `/ja` — English and Japanese mixed content
+
+## Key files
 
 ```text
 /
-├── public/
+├── astro.config.mjs        ← Font configuration (Google Fonts, Noto Sans JP)
 ├── src/
+│   ├── layouts/
+│   │   └── Layout.astro    ← <Font /> component usage
 │   └── pages/
-│       └── index.astro
-└── package.json
+│       ├── index.md
+│       ├── en.md
+│       └── ja.md
+└── .github/workflows/
+    └── deploy.yml          ← GitHub Pages deployment (Node.js 24)
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Commands
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command           | Action                                      |
+| :---------------- | :------------------------------------------ |
+| `npm install`     | Install dependencies                        |
+| `npm run dev`     | Start local dev server at `localhost:4321`  |
+| `npm run build`   | Build production site to `./dist/`          |
+| `npm run preview` | Preview build locally before deploying      |
